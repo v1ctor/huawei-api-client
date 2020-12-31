@@ -1,0 +1,17 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
+}

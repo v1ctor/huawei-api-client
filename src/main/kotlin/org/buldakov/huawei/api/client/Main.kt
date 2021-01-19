@@ -9,9 +9,6 @@ fun main(args: Array<String>) {
 
     //val token = userApi.getSessionToken()
 
-    val sessionInfo = modemApi.login("admin", password)
-    while (true) {
-        modemApi.getSms(sessionInfo)
-        Thread.sleep(1000)
-    }
+    modemApi.login("admin", password)
+    modemApi.getSms()
 }

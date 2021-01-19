@@ -1,36 +1,35 @@
 package org.buldakov.huawei.api.client
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import okhttp3.Cookie
-import okhttp3.Headers
+import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.buldakov.huawei.api.client.utils.base64
 import org.buldakov.huawei.api.client.utils.sha256
 import org.slf4j.LoggerFactory
 
-class ModemApi(private val baseUrl: String) {
+class ModemClient(private val baseUrl: String) {
 
-    private val log = LoggerFactory.getLogger(ModemApi::class.java.name)
+    private val log = LoggerFactory.getLogger(ModemClient::class.java.name)
 
     private var sessionId: String? = null
     private var loginToken: String? = null
     private var tokens = mutableListOf<String>()
 
+    private val httpClient = OkHttpClient()
+    private val xmlMapper = XmlMapper()
+
     private fun prepareSessionInfo() {
         val url = "$baseUrl/api/webserver/SesTokInfo"
-        val client = OkHttpClient()
         val request = Request.Builder().url(url).get().build()
-        val response = client.newCall(request).execute()
+        val response = httpClient.newCall(request).execute()
 
         val body = response.body?.string()
 
         processHeaders(response.headers)
         log.info(body)
         log.info(sessionId)
-        val tree = XmlMapper().readTree(body)
+        val tree = xmlMapper.readTree(body)
         if (sessionId == null) {
             sessionId = tree.get("SesInfo").asText()
         }
@@ -100,33 +99,24 @@ class ModemApi(private val baseUrl: String) {
         log.info("Login session id {}", sessionId)
     }
 
-    fun getSms() {
+    fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
         getSessionInfo()
-        val data = """
-            <request>
-                <PageIndex>1</PageIndex>
-                <ReadCount>1</ReadCount>
-                <BoxType>1</BoxType>
-                <SortType>0</SortType>
-                <Ascending>0</Ascending>
-                <UnreadPreferred>0</UnreadPreferred>
-            </request>
-        """
-        val body = data.toRequestBody()
-        val url = "$baseUrl/api/sms/sms-list"
 
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).post(body)
+        val request = Request.Builder().url("$baseUrl$path").post(requestBody)
                 .header("__RequestVerificationToken", token()!!)
                 .header("Cookie", "SessionID=${sessionId}")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .build()
-        val response = client.newCall(request).execute()
 
-        log.info("Sms body {}", response.body?.string())
-        log.info("sms headers {}", response.headers.toString())
+        try {
+            val response = httpClient.newCall(request).execute()
+            processHeaders(response.headers)
+            return response.body
+        } catch (e: Exception) {
+            log.error("Error while making a post request", e)
+        }
+        return null
     }
-
 
     private fun authToken(username: String, password: String, loginToken: String): String {
         return (username + password.sha256().base64() + loginToken).sha256().base64()

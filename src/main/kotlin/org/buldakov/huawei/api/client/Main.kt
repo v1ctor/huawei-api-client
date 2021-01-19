@@ -5,10 +5,14 @@ fun main(args: Array<String>) {
         println("please enter password")
     }
     val password = args[0]
-    val modemApi = ModemApi("http://192.168.8.1")
+    val modemClient = ModemClient("http://192.168.8.1")
 
     //val token = userApi.getSessionToken()
 
-    modemApi.login("admin", password)
-    modemApi.getSms()
+    modemClient.login("admin", password)
+    val smsApi = SmsApi(modemClient)
+    while (true) {
+        smsApi.getSms()
+        Thread.sleep(1000)
+    }
 }

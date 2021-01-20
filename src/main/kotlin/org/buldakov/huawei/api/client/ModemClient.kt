@@ -1,9 +1,9 @@
 package org.buldakov.huawei.api.client
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.buldakov.huawei.api.client.model.SessionInfoResponse
 import org.buldakov.huawei.api.client.utils.base64
 import org.buldakov.huawei.api.client.utils.sha256
 import org.buldakov.huawei.api.client.xml.getXmlMapper
@@ -28,13 +28,11 @@ class ModemClient(private val baseUrl: String) {
         val body = response.body?.string()
 
         processHeaders(response.headers)
-        val tree = xmlMapper.readTree(body)
+        val sessionInfo = xmlMapper.readValue(body, SessionInfoResponse::class.java)
         if (sessionId == null) {
-            sessionId = tree.get("SesInfo").asText()
+            sessionId = sessionInfo.sesInfo
         }
-        val tokInfo = tree.get("TokInfo")
-
-        loginToken = tokInfo.asText()
+        loginToken = sessionInfo.tokInfo
     }
 
     private fun getSessionInfo() {

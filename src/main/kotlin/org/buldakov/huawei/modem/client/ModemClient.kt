@@ -115,6 +115,13 @@ class ModemClient(private val baseUrl: String) {
         return null
     }
 
+    fun <I, T> makePost(path: String, request: I, clazz: Class<T>): T? {
+        val body = xmlMapper.writeValueAsString(request).toRequestBody()
+        return makePost(path, body)?.byteStream()?.let {
+            xmlMapper.readValue(it, clazz)
+        }
+    }
+
     fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
         return makePost(path, requestBody)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
     }

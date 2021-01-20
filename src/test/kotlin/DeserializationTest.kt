@@ -1,4 +1,5 @@
 import org.buldakov.huawei.modem.model.Message
+import org.buldakov.huawei.modem.model.OKResponse
 import org.buldakov.huawei.modem.model.SmsListResponse
 import org.buldakov.huawei.modem.xml.getXmlMapper
 import org.joda.time.LocalDateTime
@@ -59,5 +60,15 @@ class DeserializationTest {
             ),
             result
         )
+    }
+
+    @Test
+    fun deserializationOKResponseTest() {
+
+        val response = "<response>OK</response>"
+        val xmlMapper = getXmlMapper()
+
+        val result = xmlMapper.readValue(response, OKResponse::class.java)
+        assertEquals("OK", result.value)
     }
 }

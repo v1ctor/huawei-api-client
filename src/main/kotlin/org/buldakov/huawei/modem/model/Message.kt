@@ -8,5 +8,4 @@ data class Message(
     val phone: String,
     val content: String,
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") val date: LocalDateTime
-) {
-}
+)

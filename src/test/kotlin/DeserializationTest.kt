@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test
 
 class DeserializationTest {
 
-
     @Test
     fun deserializeTest() {
 
-        val payloads = """
+        val payloads =
+            """
             <response>
                 <Count>1</Count>
                     <Messages>
@@ -30,8 +30,8 @@ class DeserializationTest {
             </response>
         """
 
-
-        val message = """
+        val message =
+            """
                         <Message>
                             <Smstat>1</Smstat>
                             <Index>40006</Index>
@@ -49,7 +49,6 @@ class DeserializationTest {
 
         xmlMapper.readValue(payloads, SmsListResponse::class.java)
 
-
         val result = xmlMapper.readValue(message, Message::class.java)
         assertEquals(
             Message(
@@ -57,7 +56,8 @@ class DeserializationTest {
                 "+447711554422",
                 "Test",
                 LocalDateTime("2021-01-19T21:32:38")
-            ), result
+            ),
+            result
         )
     }
 }

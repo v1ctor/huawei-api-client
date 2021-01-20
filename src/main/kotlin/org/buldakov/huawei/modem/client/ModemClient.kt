@@ -1,8 +1,13 @@
 package org.buldakov.huawei.modem.client
 
-import okhttp3.*
+import okhttp3.Cookie
+import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
 import org.buldakov.huawei.modem.model.SessionInfoResponse
 import org.buldakov.huawei.modem.utils.base64
 import org.buldakov.huawei.modem.utils.sha256
@@ -68,9 +73,10 @@ class ModemClient(private val baseUrl: String) {
     fun login(username: String, password: String) {
         getSessionInfo()
         val authToken = authToken(username, password, loginToken!!)
-        val data = """<?xml version:"1.0" encoding="UTF-8"?>
+        val data =
+            """<?xml version:"1.0" encoding="UTF-8"?>
                     <request>
-                        <Username>${username}</Username>
+                        <Username>$username</Username>
                         <Password>$authToken</Password>
                         <password_type>4</password_type>
                     </request>
@@ -79,7 +85,7 @@ class ModemClient(private val baseUrl: String) {
         val body = data.toRequestBody()
         val request = Request.Builder().url("$baseUrl/api/user/login").post(body)
             .header("__RequestVerificationToken", loginToken!!)
-            .header("Cookie", "SessionID=${sessionId}")
+            .header("Cookie", "SessionID=$sessionId")
             .header("X-Requested-With", "XMLHttpRequest")
             .build()
 
@@ -94,7 +100,7 @@ class ModemClient(private val baseUrl: String) {
 
         val request = Request.Builder().url("$baseUrl$path").post(requestBody)
             .header("__RequestVerificationToken", token()!!)
-            .header("Cookie", "SessionID=${sessionId}")
+            .header("Cookie", "SessionID=$sessionId")
             .header("X-Requested-With", "XMLHttpRequest")
             .build()
 

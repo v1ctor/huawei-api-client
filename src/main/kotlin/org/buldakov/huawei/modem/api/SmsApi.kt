@@ -13,7 +13,8 @@ class SmsApi(private val modemClient: ModemClient) {
     private val log = LoggerFactory.getLogger(SmsApi::class.java.name)
 
     fun getSms(unread: Boolean = false): List<Message> {
-        val data = """
+        val data =
+            """
             <request>
                 <PageIndex>1</PageIndex>
                 <ReadCount>1</ReadCount>
@@ -32,10 +33,10 @@ class SmsApi(private val modemClient: ModemClient) {
 
     fun sendSms(phone: String, message: String) {
         val now = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(LocalDateTime.now())
-        val data = """<request><Index>-1</Index><Phones><Phone>$phone</Phone></Phones><Sca></Sca><Content>$message</Content><Length>${message.length}</Length><Reserved>1</Reserved><Date>$now</Date></request>"""
+        val data =
+            """<request><Index>-1</Index><Phones><Phone>$phone</Phone></Phones><Sca></Sca><Content>$message</Content><Length>${message.length}</Length><Reserved>1</Reserved><Date>$now</Date></request>"""
         val body = data.toRequestBody()
         val response = modemClient.makePost("/api/sms/send-sms", body)
         log.info(response?.string())
     }
-
 }

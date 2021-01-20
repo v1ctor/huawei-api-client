@@ -26,6 +26,9 @@ class ModemClient(private val baseUrl: String) {
     private val xmlMapper = getXmlMapper()
 
     private fun prepareSessionInfo() {
+        if (sessionId != null && loginToken != null) {
+            return
+        }
         val url = "$baseUrl/api/webserver/SesTokInfo"
         val request = Request.Builder().url(url).get().build()
         val response = httpClient.newCall(request).execute()
@@ -38,12 +41,6 @@ class ModemClient(private val baseUrl: String) {
             sessionId = sessionInfo.sesInfo
         }
         loginToken = sessionInfo.tokInfo
-    }
-
-    private fun getSessionInfo() {
-        if (sessionId == null || loginToken == null) {
-            prepareSessionInfo()
-        }
     }
 
     private fun token(): String? {
@@ -71,7 +68,7 @@ class ModemClient(private val baseUrl: String) {
     }
 
     fun login(username: String, password: String) {
-        getSessionInfo()
+        prepareSessionInfo()
         val authToken = authToken(username, password, loginToken!!)
         val data =
             """<?xml version:"1.0" encoding="UTF-8"?>
@@ -95,13 +92,40 @@ class ModemClient(private val baseUrl: String) {
         processHeaders(response.headers)
     }
 
-    fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
-        getSessionInfo()
+    fun <T> makeGet(path: String, clazz: Class<T>): T? {
+        return makeGet(path)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
+    }
 
-        val request = Request.Builder().url("$baseUrl$path").post(requestBody)
-            .header("__RequestVerificationToken", token()!!)
-            .header("Cookie", "SessionID=$sessionId")
-            .header("X-Requested-With", "XMLHttpRequest")
+    fun makeGet(path: String): ResponseBody? {
+        prepareSessionInfo()
+
+        val request = Request.Builder()
+            .url("$baseUrl$path")
+            .get()
+            .applyRequestHeaders()
+            .build()
+        try {
+            val response = httpClient.newCall(request).execute()
+            processHeaders(response.headers)
+
+            return response.body
+        } catch (e: Exception) {
+            log.error("Error while making a get request", e)
+        }
+        return null
+    }
+
+    fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
+        return makePost(path, requestBody)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
+    }
+
+    fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
+        prepareSessionInfo()
+
+        val request = Request.Builder()
+            .url("$baseUrl$path")
+            .post(requestBody)
+            .applyRequestHeaders()
             .build()
 
         try {
@@ -115,8 +139,11 @@ class ModemClient(private val baseUrl: String) {
         return null
     }
 
-    fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
-        return makePost(path, requestBody)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
+    private fun Request.Builder.applyRequestHeaders(): Request.Builder {
+        header("__RequestVerificationToken", token()!!)
+        header("Cookie", "SessionID=$sessionId")
+        header("X-Requested-With", "XMLHttpRequest")
+        return this
     }
 
     private fun authToken(username: String, password: String, loginToken: String): String {

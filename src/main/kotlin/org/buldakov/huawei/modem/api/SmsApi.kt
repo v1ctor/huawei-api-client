@@ -2,6 +2,7 @@ package org.buldakov.huawei.modem.api
 
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.buldakov.huawei.modem.client.ModemClient
+import org.buldakov.huawei.modem.model.GetSmsCountResponse
 import org.buldakov.huawei.modem.model.Message
 import org.buldakov.huawei.modem.model.SmsListResponse
 import org.joda.time.LocalDateTime
@@ -38,5 +39,10 @@ class SmsApi(private val modemClient: ModemClient) {
         val body = data.toRequestBody()
         val response = modemClient.makePost("/api/sms/send-sms", body)
         log.info(response?.string())
+    }
+
+    fun smsCount() {
+        val response = modemClient.makeGet("/api/sms/sms-count", GetSmsCountResponse::class.java)
+        log.info(response?.toString())
     }
 }

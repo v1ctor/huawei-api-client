@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
         smsApi.sendSms(phone, "Send from API")
     }
     while (true) {
+        smsApi.smsCount()
         log.info(smsApi.getSms().toString())
         Thread.sleep(1000)
     }

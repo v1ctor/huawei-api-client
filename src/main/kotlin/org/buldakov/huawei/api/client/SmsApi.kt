@@ -3,6 +3,9 @@ package org.buldakov.huawei.api.client
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.buldakov.huawei.api.client.model.Message
 import org.buldakov.huawei.api.client.model.SmsListResponse
+import org.joda.time.LocalDateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 import org.slf4j.LoggerFactory
 
 class SmsApi(private val modemClient: ModemClient) {
@@ -25,6 +28,14 @@ class SmsApi(private val modemClient: ModemClient) {
         val response = modemClient.makePost("/api/sms/sms-list", body, SmsListResponse::class.java)
 
         return response?.messages ?: emptyList()
+    }
+
+    fun sendSms(phone: String, message: String) {
+        val now = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(LocalDateTime.now())
+        val data = """<request><Index>-1</Index><Phones><Phone>$phone</Phone></Phones><Sca></Sca><Content>$message</Content><Length>${message.length}</Length><Reserved>1</Reserved><Date>$now</Date></request>"""
+        val body = data.toRequestBody()
+        val response = modemClient.makePost("/api/sms/send-sms", body)
+        log.info(response?.string())
     }
 
 }

@@ -13,6 +13,7 @@ fun main(args: Array<String>) {
 
     modemClient.login("admin", password)
     val smsApi = SmsApi(modemClient)
+    smsApi.sendSms("+123456789", "Send from API")
     while (true) {
         log.info(smsApi.getSms().toString())
         Thread.sleep(1000)

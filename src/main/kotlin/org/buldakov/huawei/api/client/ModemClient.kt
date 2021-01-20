@@ -78,10 +78,10 @@ class ModemClient(private val baseUrl: String) {
 
         val body = data.toRequestBody()
         val request = Request.Builder().url("$baseUrl/api/user/login").post(body)
-                .header("__RequestVerificationToken", loginToken!!)
-                .header("Cookie", "SessionID=${sessionId}")
-                .header("X-Requested-With", "XMLHttpRequest")
-                .build()
+            .header("__RequestVerificationToken", loginToken!!)
+            .header("Cookie", "SessionID=${sessionId}")
+            .header("X-Requested-With", "XMLHttpRequest")
+            .build()
 
         val client = OkHttpClient()
         val response = client.newCall(request).execute()
@@ -89,24 +89,28 @@ class ModemClient(private val baseUrl: String) {
         processHeaders(response.headers)
     }
 
-    fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
+    fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
         getSessionInfo()
 
         val request = Request.Builder().url("$baseUrl$path").post(requestBody)
-                .header("__RequestVerificationToken", token()!!)
-                .header("Cookie", "SessionID=${sessionId}")
-                .header("X-Requested-With", "XMLHttpRequest")
-                .build()
+            .header("__RequestVerificationToken", token()!!)
+            .header("Cookie", "SessionID=${sessionId}")
+            .header("X-Requested-With", "XMLHttpRequest")
+            .build()
 
         try {
             val response = httpClient.newCall(request).execute()
             processHeaders(response.headers)
 
-            return response.body?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
+            return response.body
         } catch (e: Exception) {
             log.error("Error while making a post request", e)
         }
         return null
+    }
+
+    fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
+        return makePost(path, requestBody)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
     }
 
     private fun authToken(username: String, password: String, loginToken: String): String {

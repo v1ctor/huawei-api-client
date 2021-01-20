@@ -48,7 +48,9 @@ class ModemClient(private val baseUrl: String) {
             log.warn("No token you need to login again.")
             return null
         }
-        return tokens.removeLast()
+        val token = tokens.removeLast()
+        log.info("Tokens left: ${tokens.size}")
+        return token
     }
 
     private fun processTokens(header: String) {
@@ -56,6 +58,7 @@ class ModemClient(private val baseUrl: String) {
         if (strings.size > 1) {
             tokens = strings.subList(2, strings.lastIndex).toMutableList()
         } else if (strings.size == 1) {
+            log.info("Token added")
             tokens.add(strings[0])
         }
     }
@@ -96,7 +99,7 @@ class ModemClient(private val baseUrl: String) {
         return makeGet(path)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
     }
 
-    fun makeGet(path: String): ResponseBody? {
+    private fun makeGet(path: String): ResponseBody? {
         prepareSessionInfo()
 
         val request = Request.Builder()
@@ -126,13 +129,14 @@ class ModemClient(private val baseUrl: String) {
         return makePost(path, requestBody)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
     }
 
-    fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
+    private fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
         prepareSessionInfo()
 
         val request = Request.Builder()
             .url("$baseUrl$path")
             .post(requestBody)
             .applyRequestHeaders()
+            .addVerificationToken()
             .build()
 
         try {
@@ -146,8 +150,12 @@ class ModemClient(private val baseUrl: String) {
         return null
     }
 
-    private fun Request.Builder.applyRequestHeaders(): Request.Builder {
+    private fun Request.Builder.addVerificationToken(): Request.Builder {
         header("__RequestVerificationToken", token()!!)
+        return this
+    }
+
+    private fun Request.Builder.applyRequestHeaders(): Request.Builder {
         header("Cookie", "SessionID=$sessionId")
         header("X-Requested-With", "XMLHttpRequest")
         return this

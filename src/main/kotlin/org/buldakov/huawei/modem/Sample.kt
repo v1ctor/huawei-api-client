@@ -21,8 +21,14 @@ fun main(args: Array<String>) {
     val smsApi = SmsApi(modemClient)
     if (phone != null) {
         smsApi.sendSms(phone, "New message")
-        val result = smsApi.getSms(inbox = false)
+
+        var result = smsApi.getSms(inbox = false)
+        log.info(result.toString())
+
         smsApi.deleteSms(result.map { it.index })
+
+        result = smsApi.getSms(inbox = false)
+        log.info(result.toString())
     }
     while (true) {
         val count = smsApi.smsCount()

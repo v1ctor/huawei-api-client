@@ -1,4 +1,4 @@
-group 'org.buldakov.huawei.api.client'
+group 'org.buldakov.huawei.modem.client'
 version '1.0'
 
 buildscript {

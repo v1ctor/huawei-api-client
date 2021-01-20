@@ -1,7 +1,6 @@
-package org.buldakov.huawei.api.client.model
+package org.buldakov.huawei.modem.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 
 data class Message(

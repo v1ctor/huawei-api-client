@@ -1,12 +1,12 @@
-package org.buldakov.huawei.api.client
+package org.buldakov.huawei.modem.client
 
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.buldakov.huawei.api.client.model.SessionInfoResponse
-import org.buldakov.huawei.api.client.utils.base64
-import org.buldakov.huawei.api.client.utils.sha256
-import org.buldakov.huawei.api.client.xml.getXmlMapper
+import org.buldakov.huawei.modem.model.SessionInfoResponse
+import org.buldakov.huawei.modem.utils.base64
+import org.buldakov.huawei.modem.utils.sha256
+import org.buldakov.huawei.modem.xml.getXmlMapper
 import org.slf4j.LoggerFactory
 
 class ModemClient(private val baseUrl: String) {

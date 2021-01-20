@@ -1,4 +1,4 @@
-package org.buldakov.huawei.api.client.utils
+package org.buldakov.huawei.modem.utils
 
 import java.security.MessageDigest
 import java.util.*

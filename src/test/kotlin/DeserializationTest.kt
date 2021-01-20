@@ -1,6 +1,6 @@
-import org.buldakov.huawei.api.client.model.Message
-import org.buldakov.huawei.api.client.model.SmsListResponse
-import org.buldakov.huawei.api.client.xml.getXmlMapper
+import org.buldakov.huawei.modem.model.Message
+import org.buldakov.huawei.modem.model.SmsListResponse
+import org.buldakov.huawei.modem.xml.getXmlMapper
 import org.joda.time.LocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

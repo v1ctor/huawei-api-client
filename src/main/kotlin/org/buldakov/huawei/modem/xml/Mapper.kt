@@ -1,4 +1,4 @@
-package org.buldakov.huawei.api.client.xml
+package org.buldakov.huawei.modem.xml
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature

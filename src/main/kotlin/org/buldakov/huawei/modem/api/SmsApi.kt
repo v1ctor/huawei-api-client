@@ -1,11 +1,11 @@
-package org.buldakov.huawei.api.client
+package org.buldakov.huawei.modem.api
 
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.buldakov.huawei.api.client.model.Message
-import org.buldakov.huawei.api.client.model.SmsListResponse
+import org.buldakov.huawei.modem.client.ModemClient
+import org.buldakov.huawei.modem.model.Message
+import org.buldakov.huawei.modem.model.SmsListResponse
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
 import org.slf4j.LoggerFactory
 
 class SmsApi(private val modemClient: ModemClient) {

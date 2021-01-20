@@ -1,5 +1,6 @@
-package org.buldakov.huawei.api.client
+package org.buldakov.huawei.modem.client
 
+import org.buldakov.huawei.modem.api.SmsApi
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("huawei-api-client")

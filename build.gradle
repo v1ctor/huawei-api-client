@@ -9,11 +9,22 @@ repositories {
     mavenCentral()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1'
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.1"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.11.1"
 
     implementation "ch.qos.logback:logback-classic:1.2.3"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+
+    compile 'joda-time:joda-time:2.10.5'
 }

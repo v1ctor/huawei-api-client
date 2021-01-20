@@ -25,21 +25,21 @@ repositories {
 
 dependencies {
     //Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
     //Networking
-    compile "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 
     //Time
-    compile 'joda-time:joda-time:2.10.5'
+    implementation 'joda-time:joda-time:2.10.5'
 
     //Serialization
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version"
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jackson_version"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jackson_version"
 
     //Logging
-    compile "ch.qos.logback:logback-classic:$logback_version"
+    implementation "ch.qos.logback:logback-classic:$logback_version"
 
     //Testing
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"

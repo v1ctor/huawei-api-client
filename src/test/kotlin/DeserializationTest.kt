@@ -47,7 +47,7 @@ class DeserializationTest {
 
         val xmlMapper = getXmlMapper()
 
-        val messages = xmlMapper.readValue(payloads, SmsListResponse::class.java)
+        xmlMapper.readValue(payloads, SmsListResponse::class.java)
 
 
         val result = xmlMapper.readValue(message, Message::class.java)

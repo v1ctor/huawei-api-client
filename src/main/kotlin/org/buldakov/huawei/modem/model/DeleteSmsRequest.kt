@@ -9,5 +9,4 @@ data class DeleteSmsRequest(
     @JacksonXmlProperty(localName = "Index")
     @JacksonXmlElementWrapper(useWrapping = false)
     val indexes: List<Int>
-) {
-}
+)

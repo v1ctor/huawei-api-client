@@ -1,10 +1,6 @@
 import org.buldakov.huawei.modem.model.DeleteSmsRequest
-import org.buldakov.huawei.modem.model.OKResponse
 import org.buldakov.huawei.modem.model.SendSmsRequest
 import org.buldakov.huawei.modem.xml.getXmlMapper
-import org.joda.time.DateTime
-import org.joda.time.LocalDateTime
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

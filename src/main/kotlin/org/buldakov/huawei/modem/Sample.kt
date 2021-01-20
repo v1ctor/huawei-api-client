@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     modemClient.login("admin", password)
     val smsApi = SmsApi(modemClient)
     if (phone != null) {
-        smsApi.sendSms(phone, "Send from API")
+        smsApi.sendSms(phone, "New message")
         val result = smsApi.getSms(inbox = false)
         smsApi.deleteSms(result.map { it.index })
     }

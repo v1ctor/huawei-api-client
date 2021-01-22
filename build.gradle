@@ -2,10 +2,11 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.21'
     id 'org.jlleitschuh.gradle.ktlint' version '9.4.1'
     id 'maven-publish'
+    id 'signing'
 }
 
 group 'org.buldakov.huawei.modem.client'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -48,14 +49,53 @@ test {
     useJUnitPlatform()
 }
 
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = 'huawei-api-client'
             from components.java
+
+            artifact(sourcesJar)
+            artifact(javadocJar)
+
             pom {
                 name = 'Huawei 4G Modem API Client'
                 description = 'Client library which provides access to the Huawei Modem features.'
+                url = 'https://github.com/v1ctor/huawei-api-client'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'v1ctor'
+                        name = 'Victor Buldakov'
+                        email = 'victor@buldakov.org'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:v1ctor/huawei-api-client.git'
+                    developerConnection = 'scm:git:git@github.com:v1ctor/huawei-api-client.git'
+                    url = 'https://github.com/v1ctor/huawei-api-client'
+                }
             }
         }
     }
@@ -65,10 +105,15 @@ publishing {
             def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
+
             credentials {
                 username = System.getenv('NEXUS_USERNAME')
                 password = System.getenv('NEXUS_PASSWORD')
             }
         }
     }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }

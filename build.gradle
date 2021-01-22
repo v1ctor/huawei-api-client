@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'org.buldakov.huawei.modem.client'
-version '1.0'
+version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -61,7 +61,9 @@ publishing {
     }
     repositories {
         maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
                 username = System.getenv('NEXUS_USERNAME')

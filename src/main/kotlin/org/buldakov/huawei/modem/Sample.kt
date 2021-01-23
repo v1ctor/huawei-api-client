@@ -1,6 +1,8 @@
 package org.buldakov.huawei.modem.client
 
 import org.buldakov.huawei.modem.api.SmsApi
+import org.buldakov.huawei.modem.model.ReadFilter
+import org.buldakov.huawei.modem.model.SmsFolder
 import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("huawei-api-client")
@@ -22,19 +24,19 @@ fun main(args: Array<String>) {
     if (phone != null) {
         smsApi.sendSms(phone, "New message")
 
-        var result = smsApi.getSms(inbox = false)
+        var result = smsApi.getSms(folder = SmsFolder.OUTBOX)
         log.info(result.toString())
 
         smsApi.deleteSms(result.map { it.index })
 
-        result = smsApi.getSms(inbox = false)
+        result = smsApi.getSms(folder = SmsFolder.OUTBOX)
         log.info(result.toString())
     }
     while (true) {
         val count = smsApi.smsCount()
         log.info(count.toString())
         if (count?.localInbox ?: 0 > 0) {
-            log.info(smsApi.getSms().toString())
+            log.info(smsApi.getSms(readFilter = ReadFilter.UNREAD_FIRST).toString())
         }
         Thread.sleep(1000)
     }

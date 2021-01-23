@@ -4,9 +4,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.buldakov.huawei.modem.client.ModemClient
 import org.buldakov.huawei.modem.model.DeleteSmsRequest
 import org.buldakov.huawei.modem.model.GetSmsCountResponse
+import org.buldakov.huawei.modem.model.IndexRequest
 import org.buldakov.huawei.modem.model.Message
 import org.buldakov.huawei.modem.model.OKResponse
+import org.buldakov.huawei.modem.model.ReadFilter
 import org.buldakov.huawei.modem.model.SendSmsRequest
+import org.buldakov.huawei.modem.model.SmsFolder
 import org.buldakov.huawei.modem.model.SmsListResponse
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
@@ -16,16 +19,21 @@ class SmsApi(private val modemClient: ModemClient) {
 
     private val log = LoggerFactory.getLogger(SmsApi::class.java.name)
 
-    fun getSms(page: Int = 1, amount: Int = 1, inbox: Boolean = true, unread: Boolean = false): List<Message> {
+    fun getSms(
+        page: Int = 1,
+        amount: Int = 1,
+        folder: SmsFolder = SmsFolder.INBOX,
+        readFilter: ReadFilter = ReadFilter.UNREAD_FIRST
+    ): List<Message> {
         val data =
             """
             <request>
                 <PageIndex>$page</PageIndex>
                 <ReadCount>$amount</ReadCount>
-                <BoxType>${if (inbox) '1' else '2'}</BoxType>
+                <BoxType>${folder.tag}</BoxType>
                 <SortType>0</SortType>
                 <Ascending>0</Ascending>
-                <UnreadPreferred>${if (unread) '1' else '0'}</UnreadPreferred>
+                <UnreadPreferred>${readFilter.tag}</UnreadPreferred>
             </request>
         """
         val body = data.toRequestBody()
@@ -46,11 +54,22 @@ class SmsApi(private val modemClient: ModemClient) {
         return modemClient.makeGet("/api/sms/sms-count", GetSmsCountResponse::class.java)
     }
 
+    fun deleteSms(index: Int): Boolean {
+        return deleteSms(listOf(index))
+    }
+
     fun deleteSms(indexes: List<Int>): Boolean {
         val request = DeleteSmsRequest(indexes)
 
         val response = modemClient.makePost("/api/sms/delete-sms", request, OKResponse::class.java)
         log.info(response.toString())
+
+        return response?.value == "OK"
+    }
+
+    fun markReadSms(index: Int): Boolean {
+        val request = IndexRequest(index)
+        val response = modemClient.makePost("/api/sms/set-read", request, OKResponse::class.java)
 
         return response?.value == "OK"
     }

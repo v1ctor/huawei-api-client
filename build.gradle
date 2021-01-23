@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     //Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.21"
 
     //Networking

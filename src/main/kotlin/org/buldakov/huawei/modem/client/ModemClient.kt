@@ -7,7 +7,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
 import org.buldakov.huawei.modem.model.SessionInfoResponse
 import org.buldakov.huawei.modem.utils.base64
 import org.buldakov.huawei.modem.utils.sha256
@@ -96,10 +95,10 @@ class ModemClient(private val baseUrl: String) {
     }
 
     fun <T> makeGet(path: String, clazz: Class<T>): T? {
-        return makeGet(path)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
+        return makeGet(path)?.let { xmlMapper.readValue(it, clazz) }
     }
 
-    private fun makeGet(path: String): ResponseBody? {
+    private fun makeGet(path: String): ByteArray? {
         prepareSessionInfo()
 
         val request = Request.Builder()
@@ -111,7 +110,7 @@ class ModemClient(private val baseUrl: String) {
             val response = httpClient.newCall(request).execute()
             processHeaders(response.headers)
 
-            return response.body
+            return response.body?.bytes()
         } catch (e: Exception) {
             log.error("Error while making a get request", e)
         }
@@ -120,16 +119,16 @@ class ModemClient(private val baseUrl: String) {
 
     fun <I, T> makePost(path: String, request: I, clazz: Class<T>): T? {
         val body = xmlMapper.writeValueAsString(request).toRequestBody()
-        return makePost(path, body)?.byteStream()?.let {
+        return makePost(path, body)?.let {
             xmlMapper.readValue(it, clazz)
         }
     }
 
     fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
-        return makePost(path, requestBody)?.byteStream()?.let { xmlMapper.readValue(it, clazz) }
+        return makePost(path, requestBody)?.let { xmlMapper.readValue(it, clazz) }
     }
 
-    private fun makePost(path: String, requestBody: RequestBody): ResponseBody? {
+    private fun makePost(path: String, requestBody: RequestBody): ByteArray? {
         prepareSessionInfo()
 
         val request = Request.Builder()
@@ -143,7 +142,7 @@ class ModemClient(private val baseUrl: String) {
             val response = httpClient.newCall(request).execute()
             processHeaders(response.headers)
 
-            return response.body
+            return response.body?.bytes()
         } catch (e: Exception) {
             log.error("Error while making a post request", e)
         }

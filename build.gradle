@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'org.buldakov.huawei.modem.client'
-version '1.01'
+version '1.0.2'
 
 repositories {
     mavenCentral()

@@ -33,6 +33,20 @@ fun main(args: Array<String>) {
         log.info(result.toString())
     }
     while (true) {
+        val sms = smsApi.getSms(folder = SmsFolder.OUTBOX, amount = 20)
+        for (s in sms) {
+            log.info("$s")
+            smsApi.deleteSms(s.index)
+        }
+        if (sms.isEmpty()) {
+            break
+        }
+    }
+
+
+
+
+    while (true) {
         val count = smsApi.smsCount()
         log.info(count.toString())
         if (count?.localInbox ?: 0 > 0) {

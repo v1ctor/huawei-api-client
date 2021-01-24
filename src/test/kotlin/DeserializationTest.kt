@@ -71,4 +71,22 @@ class DeserializationTest {
         val result = xmlMapper.readValue(response, OKResponse::class.java)
         assertEquals("OK", result.value)
     }
+
+    @Test
+    fun deserializationEmptyListResponseTest() {
+
+        val response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "    <response>\n" +
+                "    <Count>0</Count>\n" +
+                "    <Messages>\n" +
+                "\n" +
+                "    </Messages>\n" +
+                "    </response>"
+        val xmlMapper = getXmlMapper()
+
+        val result = xmlMapper.readValue(response, SmsListResponse::class.java)
+        assertEquals(listOf<Message>(), result.messages)
+    }
+
+
 }

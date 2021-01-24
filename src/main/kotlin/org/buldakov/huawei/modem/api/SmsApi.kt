@@ -4,6 +4,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.buldakov.huawei.modem.client.ModemClient
 import org.buldakov.huawei.modem.model.DeleteSmsRequest
 import org.buldakov.huawei.modem.model.GetSmsCountResponse
+import org.buldakov.huawei.modem.model.GetSmsRequest
 import org.buldakov.huawei.modem.model.IndexRequest
 import org.buldakov.huawei.modem.model.Message
 import org.buldakov.huawei.modem.model.OKResponse
@@ -11,6 +12,7 @@ import org.buldakov.huawei.modem.model.ReadFilter
 import org.buldakov.huawei.modem.model.SendSmsRequest
 import org.buldakov.huawei.modem.model.SmsFolder
 import org.buldakov.huawei.modem.model.SmsListResponse
+import org.buldakov.huawei.modem.model.SortOrder
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
 import org.slf4j.LoggerFactory
@@ -23,22 +25,11 @@ class SmsApi(private val modemClient: ModemClient) {
         page: Int = 1,
         amount: Int = 1,
         folder: SmsFolder = SmsFolder.INBOX,
-        readFilter: ReadFilter = ReadFilter.UNREAD_FIRST
+        readFilter: ReadFilter = ReadFilter.UNREAD_FIRST,
+        sortOrder: SortOrder = SortOrder.DESC
     ): List<Message> {
-        val data =
-            """
-            <request>
-                <PageIndex>$page</PageIndex>
-                <ReadCount>$amount</ReadCount>
-                <BoxType>${folder.tag}</BoxType>
-                <SortType>0</SortType>
-                <Ascending>0</Ascending>
-                <UnreadPreferred>${readFilter.tag}</UnreadPreferred>
-            </request>
-        """
-        val body = data.toRequestBody()
-
-        val response = modemClient.makePost("/api/sms/sms-list", body, SmsListResponse::class.java)
+        val request = GetSmsRequest(page, amount, folder.tag, 0, sortOrder.tag, readFilter.tag)
+        val response = modemClient.makePost("/api/sms/sms-list", request, SmsListResponse::class.java)
 
         return response?.messages ?: emptyList()
     }

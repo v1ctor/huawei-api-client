@@ -15,19 +15,19 @@ class DeserializationTest {
             """
             <response>
                 <Count>1</Count>
-                    <Messages>
-                        <Message>
-                            <Smstat>1</Smstat>
-                            <Index>40006</Index>
-                            <Phone>+447922584844</Phone>
-                            <Content>Тест </Content>
-                            <Date>2021-01-19 21:32:38</Date>
-                            <Sca></Sca>
-                            <SaveType>0</SaveType>
-                            <Priority>0</Priority>
-                            <SmsType>1</SmsType>
-                        </Message>
-	                </Messages>
+                <Messages>
+                    <Message>
+                        <Smstat>1</Smstat>
+                        <Index>40006</Index>
+                        <Phone>+447922584844</Phone>
+                        <Content>Тест </Content>
+                        <Date>2021-01-19 21:32:38</Date>
+                        <Sca></Sca>
+                        <SaveType>0</SaveType>
+                        <Priority>0</Priority>
+                        <SmsType>1</SmsType>
+                    </Message>
+                </Messages>
             </response>
         """
 
@@ -75,17 +75,56 @@ class DeserializationTest {
     @Test
     fun deserializationEmptyListResponseTest() {
 
-        val response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "    <response>\n" +
-                "    <Count>0</Count>\n" +
-                "    <Messages>\n" +
-                "\n" +
-                "    </Messages>\n" +
-                "    </response>"
+        val response =
+            """
+                <response>
+                    <Count>0</Count>
+                    <Messages>
+                        
+                    </Messages>
+                </response>
+            """
         val xmlMapper = getXmlMapper()
 
         val result = xmlMapper.readValue(response, SmsListResponse::class.java)
         assertEquals(listOf<Message>(), result.messages)
+    }
+
+    @Test
+    fun deserializationSmsListResponseTest() {
+
+        val response =
+            """
+                <response>
+                    <Count>0</Count>
+                    <Messages>
+                        <Message>
+                            <Smstat>1</Smstat>
+                            <Index>40006</Index>
+                            <Phone>+447711554422</Phone>
+                            <Content>Test</Content>
+                            <Date>2021-01-19 21:32:38</Date>
+                            <Sca></Sca>
+                            <SaveType>0</SaveType>
+                            <Priority>0</Priority>
+                            <SmsType>1</SmsType>
+                        </Message>
+                    </Messages>
+                </response>
+            """
+        val xmlMapper = getXmlMapper()
+
+        val result = xmlMapper.readValue(response, SmsListResponse::class.java)
+        assertEquals(
+            listOf(
+                Message(
+                    index = 40006,
+                    phone = "+447711554422",
+                    content = "Test",
+                    LocalDateTime("2021-01-19T21:32:38")
+                )
+            ), result.messages
+        )
     }
 
 

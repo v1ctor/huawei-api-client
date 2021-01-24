@@ -43,9 +43,6 @@ fun main(args: Array<String>) {
         }
     }
 
-
-
-
     while (true) {
         val count = smsApi.smsCount()
         log.info(count.toString())

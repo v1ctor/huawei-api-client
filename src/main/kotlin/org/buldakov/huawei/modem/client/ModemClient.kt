@@ -98,6 +98,13 @@ class ModemClient(private val baseUrl: String) {
         return makeGet(path)?.let { xmlMapper.readValue(it, clazz) }
     }
 
+    fun <I, T> makePost(path: String, request: I, clazz: Class<T>): T? {
+        val body = xmlMapper.writeValueAsString(request).toRequestBody()
+        return makePost(path, body)?.let {
+            xmlMapper.readValue(it, clazz)
+        }
+    }
+
     private fun makeGet(path: String): ByteArray? {
         prepareSessionInfo()
 
@@ -115,17 +122,6 @@ class ModemClient(private val baseUrl: String) {
             log.error("Error while making a get request", e)
         }
         return null
-    }
-
-    fun <I, T> makePost(path: String, request: I, clazz: Class<T>): T? {
-        val body = xmlMapper.writeValueAsString(request).toRequestBody()
-        return makePost(path, body)?.let {
-            xmlMapper.readValue(it, clazz)
-        }
-    }
-
-    fun <T> makePost(path: String, requestBody: RequestBody, clazz: Class<T>): T? {
-        return makePost(path, requestBody)?.let { xmlMapper.readValue(it, clazz) }
     }
 
     private fun makePost(path: String, requestBody: RequestBody): ByteArray? {

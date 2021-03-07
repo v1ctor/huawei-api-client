@@ -4,8 +4,6 @@ plugins {
     id 'signing'
 }
 
-apply plugin: 'kotlin'
-
 group 'org.buldakov.huawei.modem.client'
 version '1.0.8'
 

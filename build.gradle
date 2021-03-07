@@ -4,6 +4,8 @@ plugins {
     id 'signing'
 }
 
+apply plugin: 'kotlin'
+
 group 'org.buldakov.huawei.modem.client'
 version '1.0.8'
 
@@ -49,6 +51,9 @@ test {
     useJUnitPlatform()
 }
 
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier.set('sources')

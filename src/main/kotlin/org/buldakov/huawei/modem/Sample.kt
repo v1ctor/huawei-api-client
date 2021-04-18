@@ -1,6 +1,7 @@
 package org.buldakov.huawei.modem.client
 
 import org.buldakov.huawei.modem.api.SmsApi
+import org.buldakov.huawei.modem.api.UssdApi
 import org.buldakov.huawei.modem.model.ReadFilter
 import org.buldakov.huawei.modem.model.SmsFolder
 import org.slf4j.LoggerFactory
@@ -32,6 +33,8 @@ fun main(args: Array<String>) {
         result = smsApi.getSms(folder = SmsFolder.OUTBOX)
         log.info(result.toString())
     }
+    val ussdApi = UssdApi(modemClient)
+    ussdApi.sendUssd("*123#")
     while (true) {
         val sms = smsApi.getSms(folder = SmsFolder.OUTBOX, amount = 20)
         for (s in sms) {
